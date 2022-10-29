@@ -13,7 +13,16 @@ from util import MyDataset, print_para
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "3,7"
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+def get_default_device():
+    if torch.cuda.is_available():
+        return 'cuda'
+    elif getattr(torch.backends, 'mps', None) is not None and torch.backends.mps.is_available():
+        return 'mps'
+    else:
+        return 'cpu'
+
+device = torch.device(get_default_device())
 
 def evaluate(model, tx, ty, id2tag, name='', base_path=None, is_test=False, type="test", is_weibo=False):
     model.eval()
@@ -97,6 +106,17 @@ if __name__ == "__main__":
     is_parallel = args.is_parallel
 
     base_path = os.path.join(result_folder, model_name + time.strftime("%Y_%m_%d_%I_%M_%S"), )
+
+    # print(trainfile)
+    # print(data_name)
+    # print(model_name)
+    # print(testfile)
+    # print(result_folder)
+    # print(batch_size)
+    # print(epoch_num)
+    # print(is_parallel)
+    # print(base_path)
+
     if not os.path.exists(base_path):
         os.makedirs(base_path)
     json.dump(args.__dict__, open(base_path + "/" + model_name + '.config', 'w', encoding='utf8'), indent=1)

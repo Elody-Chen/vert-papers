@@ -5,7 +5,16 @@ import torch.nn.init as init
 from torch.utils import data
 import numpy as np
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+def get_default_device():
+    if torch.cuda.is_available():
+        return 'cuda'
+    elif getattr(torch.backends, 'mps', None) is not None and torch.backends.mps.is_available():
+        return 'mps'
+    else:
+        return 'cpu'
+
+device = torch.device(get_default_device())
+
 
 def print_para(model):
     for name, module in model.named_children():

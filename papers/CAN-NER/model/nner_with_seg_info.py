@@ -4,7 +4,16 @@ import acnn
 import util
 import torch.nn as nn
 from self_attention_layer import SelfAttentionComponent
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+def get_default_device():
+    if torch.cuda.is_available():
+        return 'cuda'
+    elif getattr(torch.backends, 'mps', None) is not None and torch.backends.mps.is_available():
+        return 'mps'
+    else:
+        return 'cpu'
+
+device = torch.device(get_default_device())
 
 class CANNERModel(nn.Module):
     def __init__(self, config, tag2id, dropout, seg_dim = 300, embed_dim = 300, pretrain_embed=None):
