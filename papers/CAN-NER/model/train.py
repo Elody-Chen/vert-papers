@@ -33,7 +33,7 @@ def evaluate(model, tx, ty, id2tag, name='', base_path=None, is_test=False, type
             # sentence = torch.tensor(sentence, dtype=torch.long, requires_grad=False).cuda()
             sentence = torch.tensor(sentence, dtype=torch.long, requires_grad=False).to(device)
             sentence = sentence.unsqueeze(0)
-            mask = torch.ones((1, sentence.size(1))).byte().cuda()
+            mask = torch.ones((1, sentence.size(1))).byte()
             feats = model(sentence, mask)
             if isinstance(model, torch.nn.parallel.DataParallel):
                 ret = model.module.crf.forward(feats, mask)
