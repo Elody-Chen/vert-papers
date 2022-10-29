@@ -4,7 +4,15 @@ import torch.nn as nn
 import util
 from attention_layer import AttentionComponent
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+def get_default_device():
+    if torch.cuda.is_available():
+        return 'cuda'
+    elif getattr(torch.backends, 'mps', None) is not None and torch.backends.mps.is_available():
+        return 'mps'
+    else:
+        return 'cpu'
+
+device = torch.device(get_default_device())
 
 class ACNN(nn.Module):
     def __init__(self, feature_dim, hidden_dim, window_size=5, use_cnn=True, use_bias=True,

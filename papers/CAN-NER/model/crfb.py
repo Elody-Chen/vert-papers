@@ -2,7 +2,16 @@ import torch
 import torch.nn as nn
 START_TAG = -2
 STOP_TAG = -1
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+def get_default_device():
+    if torch.cuda.is_available():
+        return 'cuda'
+    elif getattr(torch.backends, 'mps', None) is not None and torch.backends.mps.is_available():
+        return 'mps'
+    else:
+        return 'cpu'
+
+device = torch.device(get_default_device())
 
 # Compute log sum exp in a numerically stable way for the forward algorithm
 def log_sum_exp(vec, m_size):
